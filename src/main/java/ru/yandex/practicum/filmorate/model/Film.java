@@ -10,10 +10,16 @@ public class Film {
     private int id;
     @NotBlank (message = "Название фильма не прошло валидацию.")
     private String name;
+    @NotBlank (message = "Описание фильма не прошло валидацию.")
     private String description;
+    @NotNull (message = "Дата фильма Null")
     private LocalDate releaseDate;
     @Positive (message = "Длительность фильма не прошла валидацию.")
     private int duration;
+
+
+    public Film(){
+    }
 
     public Film(int id, String name, String description, LocalDate releaseDate, int duration){
         this.id = id;

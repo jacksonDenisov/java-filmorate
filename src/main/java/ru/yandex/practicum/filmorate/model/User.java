@@ -19,6 +19,8 @@ public class User {
     @Past (message = "Дата рождения не прошла валидацию.")
     private LocalDate birthday;
 
+    public User(){
+    }
 
     public User(int id, String email, String login, String name, LocalDate birthday){
         this.id = id;

@@ -1,41 +1,104 @@
 package ru.yandex.practicum.filmorate.controller;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.time.LocalDate;
+import java.util.ArrayList;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest
 public class FilmControllerTest {
+    private FilmController controller;
 
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
+    @BeforeEach
+    public void setup() {
+        this.controller = new FilmController();
+    }
 
-    @MockBean
-    private FilmController filmController;
 
     @Test
-    public void checkInvalidName() throws Exception {
-
-        Film film = new Film(1, "Фильм", "Описание", LocalDate.of(1895, 12, 28), 50);
-
-        mockMvc.perform(
-                        post("/films")
-                                .content(objectMapper.writeValueAsString(film))
-                                .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isOk());
+    public void createShouldReturnOkWhenFilmIsCorrect() {
+        Film film = new Film(1, "Фильм", "description",
+                LocalDate.of(1895, 12, 28), 50);
+        assertEquals(ResponseEntity.ok().body(film), controller.create(film));
     }
+    @Test
+    public void createShouldReturnBadRequestWhenFailFilmDescription() {
+        Film film = new Film(1, "Фильм", "Пятеро друзей ( комик-группа «Шарло»), " +
+                "приезжают в город Бризуль. Здесь они хотят разыскать господина Огюста Куглова, который " +
+                "задолжал им деньги, а именно 20 миллионов. о Куглов, который за время «своего отсутствия», " +
+                "стал кандидатом Коломбани.",
+                LocalDate.of(1895, 12, 28), 50);
+        assertEquals(ResponseEntity.badRequest().body(null), controller.create(film));
+    }
+
+    @Test
+    public void createShouldReturnBadRequestWhenFailFilmReleaseDate() {
+        Film film = new Film(1, "Фильм", "description",
+                LocalDate.of(1890, 03, 25), 50);
+        assertEquals(ResponseEntity.badRequest().body(null), controller.create(film));
+    }
+
+    @Test
+    public void createShouldReturnInternalServerErrorWhenFilmIsAlreadyExist() {
+        Film film = new Film(1, "Фильм", "description",
+                LocalDate.of(1895, 12, 28), 50);
+        controller.create(film);
+        assertEquals(ResponseEntity.internalServerError().body(null), controller.create(film));
+    }
+
+    @Test
+    public void findAllShouldReturnArrayOfFilms(){
+        controller.create(new Film(1, "Фильм", "description",
+                LocalDate.of(1895, 12, 28), 50));
+        ArrayList<Film> allFilms = controller.findAll();
+        assertEquals(1, allFilms.size());
+    }
+
+    @Test
+    public void updateShouldReturnOkWhenFilmIsCorrect() {
+        Film film = new Film(1, "Фильм", "description",
+                LocalDate.of(1895, 12, 28), 50);
+        controller.create(film);
+        film.setName("Новый фильм");
+        film.setDescription("Новое описание");
+        assertEquals(ResponseEntity.ok().body(film), controller.update(film));
+    }
+
+    @Test
+    public void updateShouldReturnBadRequestWhenFailFilmDescription() {
+        Film film = new Film(1, "Фильм", "description",
+                LocalDate.of(1895, 12, 28), 50);
+        controller.create(film);
+        film.setName("Новый фильм");
+        film.setDescription("Пятеро друзей ( комик-группа «Шарло»), " +
+                "приезжают в город Бризуль. Здесь они хотят разыскать господина Огюста Куглова, который " +
+                        "задолжал им деньги, а именно 20 миллионов. о Куглов, который за время «своего отсутствия», " +
+                        "стал кандидатом Коломбани.");
+        assertEquals(ResponseEntity.badRequest().body(null), controller.update(film));
+    }
+
+    @Test
+    public void updateShouldReturnBadRequestWhenFailFilmReleaseDate() {
+        Film film = new Film(1, "Фильм", "description",
+                LocalDate.of(1895, 12, 28), 50);
+        controller.create(film);
+        film.setName("Новый фильм");
+        film.setReleaseDate(LocalDate.of(1890, 12, 28));
+        assertEquals(ResponseEntity.badRequest().body(null), controller.update(film));
+    }
+
+    @Test
+    public void updateShouldReturnInternalServerErrorWhenFilmIsNotExist() {
+        Film film = new Film(1, "Фильм", "description",
+                LocalDate.of(1895, 12, 28), 50);
+        assertEquals(ResponseEntity.internalServerError().body(null), controller.update(film));
+    }
+
+
 }
