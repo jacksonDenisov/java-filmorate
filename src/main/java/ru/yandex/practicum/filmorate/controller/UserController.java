@@ -27,7 +27,7 @@ public class UserController {
         try {
             if (users.containsKey(user.getId())) {
                 log.warn("Такой пользователь уже существует!");
-                return ResponseEntity.internalServerError().body(null);
+                return ResponseEntity.internalServerError().body(user);
             } else if (user.getLogin().contains(" ")) {
                 throw new UserValidationException("Логин пользователя не прошел валидацию!");
             }  else if (user.getName() == null || user.getName().equals("")) {
@@ -39,7 +39,7 @@ public class UserController {
             return ResponseEntity.ok().body(user);
         } catch (UserValidationException e) {
             log.warn(e.getMessage());
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body(user);
         }
     }
 
@@ -48,7 +48,7 @@ public class UserController {
         try {
             if (!users.containsKey(user.getId())) {
                 log.warn("Такого пользователя не существует!");
-                return ResponseEntity.internalServerError().body(null);
+                return ResponseEntity.internalServerError().body(user);
             } else if (user.getLogin().contains(" ")) {
                 throw new UserValidationException("Логин пользователя не прошел валидацию!");
             } else if (user.getName() == null || user.getName().equals("")) {
@@ -59,7 +59,7 @@ public class UserController {
             return ResponseEntity.ok().body(user);
         } catch (UserValidationException e) {
             log.warn(e.getMessage());
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body(user);
         }
     }
 }

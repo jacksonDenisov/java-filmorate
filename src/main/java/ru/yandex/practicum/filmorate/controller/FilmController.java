@@ -30,7 +30,7 @@ public class FilmController {
         try {
             if (films.containsKey(film.getId())) {
                 log.warn("Такой фильм уже существует!");
-                return ResponseEntity.internalServerError().body(null);
+                return ResponseEntity.internalServerError().body(film);
             } else if (film.getDescription().length() >= 200 ||
                     film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
                 throw new FilmValidationException("Фильм не прошел валидацию!");
@@ -41,7 +41,7 @@ public class FilmController {
             return ResponseEntity.ok().body(film);
         } catch (FilmValidationException e) {
             log.warn(e.getMessage());
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body(film);
         }
     }
 
@@ -50,7 +50,7 @@ public class FilmController {
         try {
             if (!films.containsKey(film.getId())) {
                 log.warn("Такого фильма нет в списке.");
-                return ResponseEntity.internalServerError().body(null);
+                return ResponseEntity.internalServerError().body(film);
             } else if (film.getDescription().length() >= 200 ||
                     film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
                 throw new FilmValidationException("Фильм не прошел валидацию!");
@@ -60,7 +60,7 @@ public class FilmController {
             return ResponseEntity.ok().body(film);
         } catch (FilmValidationException e) {
             log.warn(e.getMessage());
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body(film);
         }
     }
 }
