@@ -34,14 +34,14 @@ public class FilmControllerTest {
                 "задолжал им деньги, а именно 20 миллионов. о Куглов, который за время «своего отсутствия», " +
                 "стал кандидатом Коломбани.",
                 LocalDate.of(1895, 12, 28), 50);
-        assertEquals(ResponseEntity.badRequest().body(null), controller.create(film));
+        assertEquals(ResponseEntity.badRequest().body(film), controller.create(film));
     }
 
     @Test
     public void createShouldReturnBadRequestWhenFailFilmReleaseDate() {
         Film film = new Film(1, "Фильм", "description",
                 LocalDate.of(1890, 03, 25), 50);
-        assertEquals(ResponseEntity.badRequest().body(null), controller.create(film));
+        assertEquals(ResponseEntity.badRequest().body(film), controller.create(film));
     }
 
     @Test
@@ -49,7 +49,7 @@ public class FilmControllerTest {
         Film film = new Film(1, "Фильм", "description",
                 LocalDate.of(1895, 12, 28), 50);
         controller.create(film);
-        assertEquals(ResponseEntity.internalServerError().body(null), controller.create(film));
+        assertEquals(ResponseEntity.internalServerError().body(film), controller.create(film));
     }
 
     @Test
@@ -80,7 +80,7 @@ public class FilmControllerTest {
                 "приезжают в город Бризуль. Здесь они хотят разыскать господина Огюста Куглова, который " +
                         "задолжал им деньги, а именно 20 миллионов. о Куглов, который за время «своего отсутствия», " +
                         "стал кандидатом Коломбани.");
-        assertEquals(ResponseEntity.badRequest().body(null), controller.update(film));
+        assertEquals(ResponseEntity.badRequest().body(film), controller.update(film));
     }
 
     @Test
@@ -90,14 +90,14 @@ public class FilmControllerTest {
         controller.create(film);
         film.setName("Новый фильм");
         film.setReleaseDate(LocalDate.of(1890, 12, 28));
-        assertEquals(ResponseEntity.badRequest().body(null), controller.update(film));
+        assertEquals(ResponseEntity.badRequest().body(film), controller.update(film));
     }
 
     @Test
     public void updateShouldReturnInternalServerErrorWhenFilmIsNotExist() {
         Film film = new Film(1, "Фильм", "description",
                 LocalDate.of(1895, 12, 28), 50);
-        assertEquals(ResponseEntity.internalServerError().body(null), controller.update(film));
+        assertEquals(ResponseEntity.internalServerError().body(film), controller.update(film));
     }
 
 

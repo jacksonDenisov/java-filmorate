@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
@@ -31,13 +30,13 @@ class UserControllerTest {
     public void createShouldReturnInternalServerErrorWhenUserIsAlreadyExist() {
         User user = new User(1, "test@mail.ru", "Логин", "Имя",LocalDate.of(1895, 12, 28));
         controller.create(user);
-        assertEquals(ResponseEntity.internalServerError().body(null), controller.create(user));
+        assertEquals(ResponseEntity.internalServerError().body(user), controller.create(user));
     }
 
     @Test
     public void createShouldReturnBadRequestWhenFailUserLogin() {
         User user = new User(1, "test@mail.ru", "Логин с пробелом", "Имя",LocalDate.of(1895, 12, 28));
-        assertEquals(ResponseEntity.badRequest().body(null), controller.create(user));
+        assertEquals(ResponseEntity.badRequest().body(user), controller.create(user));
     }
 
     @Test
@@ -62,8 +61,6 @@ class UserControllerTest {
         assertEquals(1, allUsers.size());
     }
 
-
-
     @Test
     public void updateShouldReturnOkWhenUserIsCorrect() {
         User user = new User(1, "test@mail.ru", "Логин", "Имя",LocalDate.of(1895, 12, 28));
@@ -77,7 +74,7 @@ class UserControllerTest {
         User user = new User(1, "test@mail.ru", "Логин", "Имя",LocalDate.of(1895, 12, 28));
         controller.create(user);
         user.setLogin("Логин с пробелом");
-        assertEquals(ResponseEntity.badRequest().body(null), controller.update(user));
+        assertEquals(ResponseEntity.badRequest().body(user), controller.update(user));
     }
 
     @Test
@@ -91,7 +88,6 @@ class UserControllerTest {
         user.setName(null);
         assertEquals(ResponseEntity.ok().body(user), controller.update(user));
         assertEquals(user.getName(), "login");
-
     }
 
 }
