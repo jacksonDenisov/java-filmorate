@@ -9,16 +9,18 @@ import ru.yandex.practicum.filmorate.model.User;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
 @Slf4j
 public class UserController {
-    private final HashMap<Integer, User> users = new HashMap<>();
-    private static int id = 0;
+    private final Map<Long, User> users = new HashMap<>();
+    private static long id = 0;
 
     @GetMapping
-    protected ArrayList<User> findAll() {
+    protected List<User> findAll() {
         return new ArrayList<>(users.values());
     }
 
@@ -30,7 +32,7 @@ public class UserController {
                 return ResponseEntity.internalServerError().body(user);
             } else if (user.getLogin().contains(" ")) {
                 throw new UserValidationException("Логин пользователя не прошел валидацию!");
-            }  else if (user.getName() == null || user.getName().equals("")) {
+            } else if (user.getName() == null || user.getName().equals("")) {
                 user.setName(user.getLogin());
             }
             user.setId(++id);

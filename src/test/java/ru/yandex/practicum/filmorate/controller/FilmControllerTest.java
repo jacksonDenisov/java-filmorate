@@ -9,7 +9,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.List;
 
 
 public class FilmControllerTest {
@@ -27,6 +27,7 @@ public class FilmControllerTest {
                 LocalDate.of(1895, 12, 28), 50);
         assertEquals(ResponseEntity.ok().body(film), controller.create(film));
     }
+
     @Test
     public void createShouldReturnBadRequestWhenFailFilmDescription() {
         Film film = new Film(1, "Фильм", "Пятеро друзей ( комик-группа «Шарло»), " +
@@ -40,7 +41,7 @@ public class FilmControllerTest {
     @Test
     public void createShouldReturnBadRequestWhenFailFilmReleaseDate() {
         Film film = new Film(1, "Фильм", "description",
-                LocalDate.of(1890, 03, 25), 50);
+                LocalDate.of(1890, 3, 25), 50);
         assertEquals(ResponseEntity.badRequest().body(film), controller.create(film));
     }
 
@@ -53,10 +54,10 @@ public class FilmControllerTest {
     }
 
     @Test
-    public void findAllShouldReturnArrayOfFilms(){
+    public void findAllShouldReturnArrayOfFilms() {
         controller.create(new Film(1, "Фильм", "description",
                 LocalDate.of(1895, 12, 28), 50));
-        ArrayList<Film> allFilms = controller.findAll();
+        List<Film> allFilms = controller.findAll();
         assertEquals(1, allFilms.size());
     }
 
@@ -78,8 +79,8 @@ public class FilmControllerTest {
         film.setName("Новый фильм");
         film.setDescription("Пятеро друзей ( комик-группа «Шарло»), " +
                 "приезжают в город Бризуль. Здесь они хотят разыскать господина Огюста Куглова, который " +
-                        "задолжал им деньги, а именно 20 миллионов. о Куглов, который за время «своего отсутствия», " +
-                        "стал кандидатом Коломбани.");
+                "задолжал им деньги, а именно 20 миллионов. о Куглов, который за время «своего отсутствия», " +
+                "стал кандидатом Коломбани.");
         assertEquals(ResponseEntity.badRequest().body(film), controller.update(film));
     }
 

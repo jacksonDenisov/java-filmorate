@@ -11,17 +11,19 @@ import java.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/films")
 @Slf4j
 public class FilmController {
-    private final HashMap<Integer, Film> films = new HashMap<>();
-    private static int id = 0;
+    private final Map<Long, Film> films = new HashMap<>();
+    private static long id = 0;
 
 
     @GetMapping
-    protected ArrayList<Film> findAll() {
+    protected List<Film> findAll() {
         return new ArrayList<>(films.values());
     }
 

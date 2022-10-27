@@ -6,13 +6,12 @@ import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class UserControllerTest {
     private UserController controller;
-
 
 
     @BeforeEach
@@ -22,26 +21,26 @@ class UserControllerTest {
 
     @Test
     public void createShouldReturnOkWhenUserIsCorrect() {
-        User user = new User(1, "test@mail.ru", "Логин", "Имя",LocalDate.of(1895, 12, 28));
+        User user = new User(1, "test@mail.ru", "Логин", "Имя", LocalDate.of(1895, 12, 28));
         assertEquals(ResponseEntity.ok().body(user), controller.create(user));
     }
 
     @Test
     public void createShouldReturnInternalServerErrorWhenUserIsAlreadyExist() {
-        User user = new User(1, "test@mail.ru", "Логин", "Имя",LocalDate.of(1895, 12, 28));
+        User user = new User(1, "test@mail.ru", "Логин", "Имя", LocalDate.of(1895, 12, 28));
         controller.create(user);
         assertEquals(ResponseEntity.internalServerError().body(user), controller.create(user));
     }
 
     @Test
     public void createShouldReturnBadRequestWhenFailUserLogin() {
-        User user = new User(1, "test@mail.ru", "Логин с пробелом", "Имя",LocalDate.of(1895, 12, 28));
+        User user = new User(1, "test@mail.ru", "Логин с пробелом", "Имя", LocalDate.of(1895, 12, 28));
         assertEquals(ResponseEntity.badRequest().body(user), controller.create(user));
     }
 
     @Test
-    public void createShouldReturnOkAndLoginAsNameWhenEmptyOrNullUserName(){
-        User user = new User(1, "test@mail.ru", "login", "",LocalDate.of(1895, 12, 28));
+    public void createShouldReturnOkAndLoginAsNameWhenEmptyOrNullUserName() {
+        User user = new User(1, "test@mail.ru", "login", "", LocalDate.of(1895, 12, 28));
         assertEquals(user.getName(), "");
         assertEquals(ResponseEntity.ok().body(user), controller.create(user));
         assertEquals(user.getName(), "login");
@@ -54,16 +53,16 @@ class UserControllerTest {
 
 
     @Test
-    public void findAllShouldReturnArrayOfUsers(){
-        User user = new User(1, "test@mail.ru", "Логин", "Имя",LocalDate.of(1895, 12, 28));
+    public void findAllShouldReturnArrayOfUsers() {
+        User user = new User(1, "test@mail.ru", "Логин", "Имя", LocalDate.of(1895, 12, 28));
         controller.create(user);
-        ArrayList<User> allUsers = controller.findAll();
+        List<User> allUsers = controller.findAll();
         assertEquals(1, allUsers.size());
     }
 
     @Test
     public void updateShouldReturnOkWhenUserIsCorrect() {
-        User user = new User(1, "test@mail.ru", "Логин", "Имя",LocalDate.of(1895, 12, 28));
+        User user = new User(1, "test@mail.ru", "Логин", "Имя", LocalDate.of(1895, 12, 28));
         controller.create(user);
         user.setEmail("test2@mail.ru");
         assertEquals(ResponseEntity.ok().body(user), controller.update(user));
@@ -71,15 +70,15 @@ class UserControllerTest {
 
     @Test
     public void updateShouldReturnBadRequestWhenFailUserLogin() {
-        User user = new User(1, "test@mail.ru", "Логин", "Имя",LocalDate.of(1895, 12, 28));
+        User user = new User(1, "test@mail.ru", "Логин", "Имя", LocalDate.of(1895, 12, 28));
         controller.create(user);
         user.setLogin("Логин с пробелом");
         assertEquals(ResponseEntity.badRequest().body(user), controller.update(user));
     }
 
     @Test
-    public void updateShouldReturnOkAndLoginAsNameWhenEmptyOrNullUserName(){
-        User user = new User(1, "test@mail.ru", "login", "Name",LocalDate.of(1895, 12, 28));
+    public void updateShouldReturnOkAndLoginAsNameWhenEmptyOrNullUserName() {
+        User user = new User(1, "test@mail.ru", "login", "Name", LocalDate.of(1895, 12, 28));
         controller.create(user);
         assertEquals(user.getName(), "Name");
         user.setName("");
