@@ -4,10 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Past;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -22,4 +22,5 @@ public class User {
     private String name;
     @Past(message = "Дата рождения не прошла валидацию.")
     private LocalDate birthday;
+    private Set<Long> friends = new HashSet<>();
 }
