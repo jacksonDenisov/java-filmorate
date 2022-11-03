@@ -19,10 +19,12 @@ public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Long, Film> films = new HashMap<>();
     private static long id = 0;
 
+    @Override
     public List<Film> findAll() {
         return new ArrayList<>(films.values());
     }
 
+    @Override
     public Film findById(Long id) {
         if (films.containsKey(id)) {
             return films.get(id);
@@ -32,6 +34,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
     }
 
+    @Override
     public Film create(Film film) {
         if (films.containsKey(film.getId())) {
             throw new FilmValidationException("Такой фильм уже существует!");
@@ -45,6 +48,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         return film;
     }
 
+    @Override
     public Film update(Film film) {
         if (!films.containsKey(film.getId())) {
             throw new NotFoundException("Такого фильма нет в списке.");

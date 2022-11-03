@@ -16,10 +16,12 @@ public class InMemoryUserStorage implements UserStorage {
     private static long id = 0;
 
 
+    @Override
     public List<User> findAll() {
         return new ArrayList<>(users.values());
     }
 
+    @Override
     public User findById(Long id) {
         if (users.containsKey(id)) {
             return users.get(id);
@@ -29,6 +31,7 @@ public class InMemoryUserStorage implements UserStorage {
         }
     }
 
+    @Override
     public User create(User user) {
         if (users.containsKey(user.getId())) {
             throw new UserValidationException("Такой пользователь уже существует!");
@@ -44,6 +47,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
 
+    @Override
     public User update(User user) {
         if (!users.containsKey(user.getId())) {
             throw new NotFoundException("Такого пользователя не существует!");
@@ -57,6 +61,7 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
+    @Override
     public boolean isIdExist(long id) {
         return users.containsKey(id);
     }

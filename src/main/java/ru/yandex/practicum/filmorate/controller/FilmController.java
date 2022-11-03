@@ -3,20 +3,17 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 
 @RestController
 @Slf4j
 public class FilmController {
     private final FilmService service;
-    private static final long DEFAULT_TOP_FILMS_COUNT = 10;
 
     @Autowired
     public FilmController(FilmService service) {
@@ -29,12 +26,8 @@ public class FilmController {
     }
 
     @GetMapping("/films/popular")
-    protected List<Film> findMostPopularFilms(@RequestParam Optional<Long> count) {
-        if (count.isPresent()) {
-            return service.findMostPopularFilms(count.get());
-        } else {
-            return service.findMostPopularFilms(DEFAULT_TOP_FILMS_COUNT);
-        }
+    protected List<Film> findMostPopularFilms(@RequestParam(defaultValue = "10") long count) {
+        return service.findMostPopularFilms(count);
     }
 
     @GetMapping("/films/{id}")

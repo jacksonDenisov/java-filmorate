@@ -58,32 +58,30 @@ public class UserService {
         if (!storage.findById(id).getFriends().contains(friendId)) {
             log.info("Такого пользователя нет в друзьях");
             throw new NotFoundException("Такого пользователя нет в друзьях");
-        } else {
-            storage.findById(id).getFriends().remove(friendId);
-            storage.findById(friendId).getFriends().remove(id);
-            log.info("Пользователь " + id + " удален из друзей у " + friendId);
         }
+        storage.findById(id).getFriends().remove(friendId);
+        storage.findById(friendId).getFriends().remove(id);
+        log.info("Пользователь " + id + " удален из друзей у " + friendId);
     }
 
     public List<User> findFriendsOfUser(long id) {
-        List<User> friends = new ArrayList<>();
-        for (long friendId : storage.findById(id).getFriends()) {
-            friends.add(storage.findById(friendId));
-        }
-        log.info("Возвращаем список друзей для пользователя " + id + " : " + friends);
-        return friends;
+        log.info("Возвращаем список друзей для пользователя " + id);
+        return storage.findAll()
+                .stream()
+                .filter(x -> storage.findById(id).getFriends().contains(x.getId()))
+                .collect(Collectors.toList());
     }
 
     public List<User> findCommonFriends(long id, long otherId) {
-        List<User> commonFriends = new ArrayList<>();
-        Set<Long> first = storage.findById(id).getFriends();
-        Set<Long> second = storage.findById(otherId).getFriends();
-        Set<Long> result = first.stream().filter(second::contains).collect(Collectors.toSet());
-        for (long tempId : result) {
-            commonFriends.add(storage.findById(tempId));
-        }
-        log.info("Возвращаем список общих друзей у пользователей " + id + " и " + otherId + " : " + commonFriends);
-        return commonFriends;
+        Set<Long> CommonFriendsIds = storage.findById(id).getFriends()
+                .stream()
+                .filter(storage.findById(otherId).getFriends()::contains)
+                .collect(Collectors.toSet());
+        log.info("Возвращаем список общих друзей у пользователей " + id + " и " + otherId + " : " + CommonFriendsIds);
+        return storage.findAll()
+                .stream()
+                .filter(x -> CommonFriendsIds.contains(x.getId()))
+                .collect(Collectors.toList());
     }
 
 }

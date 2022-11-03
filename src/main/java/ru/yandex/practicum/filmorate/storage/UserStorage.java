@@ -8,11 +8,11 @@ public interface UserStorage {
 
     List<User> findAll();
 
+    User findById(Long id);
+
     User create(User user);
 
     User update(User user);
-
-    User findById(Long id);
 
     boolean isIdExist(long id);
 }
