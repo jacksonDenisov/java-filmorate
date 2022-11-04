@@ -1,67 +1,63 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exeptions.UserValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
-@RequestMapping("/users")
 @Slf4j
 public class UserController {
-    private final Map<Long, User> users = new HashMap<>();
-    private static long id = 0;
 
-    @GetMapping
+    private final UserService service;
+
+    @Autowired
+    public UserController(UserService service) {
+        this.service = service;
+    }
+
+    @GetMapping("/users")
     protected List<User> findAll() {
-        return new ArrayList<>(users.values());
+        return service.findAll();
     }
 
-    @PostMapping
-    protected ResponseEntity<User> create(@Valid @RequestBody User user) {
-        try {
-            if (users.containsKey(user.getId())) {
-                log.warn("Такой пользователь уже существует!");
-                return ResponseEntity.internalServerError().body(user);
-            } else if (user.getLogin().contains(" ")) {
-                throw new UserValidationException("Логин пользователя не прошел валидацию!");
-            } else if (user.getName() == null || user.getName().equals("")) {
-                user.setName(user.getLogin());
-            }
-            user.setId(++id);
-            users.put(id, user);
-            log.info("Пользователь {} успешно добавлен", user.getName());
-            return ResponseEntity.ok().body(user);
-        } catch (UserValidationException e) {
-            log.warn(e.getMessage());
-            return ResponseEntity.badRequest().body(user);
-        }
+    @GetMapping("/users/{id}")
+    protected User findById(@PathVariable long id) {
+        return service.findById(id);
     }
 
-    @PutMapping
-    protected ResponseEntity<User> update(@Valid @RequestBody User user) {
-        try {
-            if (!users.containsKey(user.getId())) {
-                log.warn("Такого пользователя не существует!");
-                return ResponseEntity.internalServerError().body(user);
-            } else if (user.getLogin().contains(" ")) {
-                throw new UserValidationException("Логин пользователя не прошел валидацию!");
-            } else if (user.getName() == null || user.getName().equals("")) {
-                user.setName(user.getLogin());
-            }
-            users.put(user.getId(), user);
-            log.info("Пользователь {} успешно обновлен", user.getName());
-            return ResponseEntity.ok().body(user);
-        } catch (UserValidationException e) {
-            log.warn(e.getMessage());
-            return ResponseEntity.badRequest().body(user);
-        }
+    @GetMapping("/users/{id}/friends")
+    protected List<User> findFriendsOfUser(@PathVariable long id) {
+        return service.findFriendsOfUser(id);
     }
+
+    @GetMapping("/users/{id}/friends/common/{otherId}")
+    protected List<User> findCommonFriends(@PathVariable long id, @PathVariable long otherId) {
+        return service.findCommonFriends(id, otherId);
+    }
+
+    @PostMapping("/users")
+    protected User create(@Valid @RequestBody User user) {
+        return service.create(user);
+    }
+
+    @PutMapping("/users")
+    protected User update(@Valid @RequestBody User user) {
+        return service.update(user);
+    }
+
+    @PutMapping("/users/{id}/friends/{friendId}")
+    protected void addFriend(@PathVariable long id, @PathVariable long friendId) {
+        service.addFriend(id, friendId);
+    }
+
+    @DeleteMapping("/users/{id}/friends/{friendId}")
+    protected void removeFriend(@PathVariable long id, @PathVariable long friendId) {
+        service.removeFriend(id, friendId);
+    }
+
 }
