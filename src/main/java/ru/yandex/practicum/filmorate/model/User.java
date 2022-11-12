@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,15 +13,26 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User {
     private long id;
+    private String name;
     @Email(message = "E-mail пользователя не нашел валидацию.")
     @NotBlank(message = "E-mail пользователя не нашел валидацию - пустое значение.")
     private String email;
     @NotBlank(message = "Логин пользователя не прошел валидацю.")
     private String login;
-    private String name;
     @Past(message = "Дата рождения не прошла валидацию.")
     private LocalDate birthday;
     private Set<Long> friends = new HashSet<>();
+
+    public User(long id, String name, String email, String login, LocalDate birthday){
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.login = login;
+        this.birthday = birthday;
+    }
+
+
 }

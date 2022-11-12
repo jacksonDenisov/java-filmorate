@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.exeptions.UserValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -64,6 +65,45 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public boolean isIdExist(long id) {
         return users.containsKey(id);
+    }
+
+    @Override
+    public void addFriend(long id, long friendId) {
+            findById(id).getFriends().add(friendId);
+            findById(friendId).getFriends().add(id);
+            log.info("Пользователь " + id + " добавлен в друзья к " + friendId);
+            log.info("Список друзей для пользователя " + id + " : " + findById(id).getFriends());
+    }
+
+    @Override
+    public void removeFriend(long id, long friendId) {
+        if (!findById(id).getFriends().contains(friendId)) {
+            log.info("Такого пользователя нет в друзьях");
+            throw new NotFoundException("Такого пользователя нет в друзьях");
+        }
+        findById(id).getFriends().remove(friendId);
+        findById(friendId).getFriends().remove(id);
+        log.info("Пользователь " + id + " удален из друзей у " + friendId);
+    }
+
+    @Override
+    public List<User> findFriendsOfUser(long id) {
+        return findAll()
+                .stream()
+                .filter(x -> findById(id).getFriends().contains(x.getId()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<User> findCommonFriends(long id, long otherId) {
+        Set<Long> CommonFriendsIds = findById(id).getFriends()
+                .stream()
+                .filter(findById(otherId).getFriends()::contains)
+                .collect(Collectors.toSet());
+        return findAll()
+                .stream()
+                .filter(x -> CommonFriendsIds.contains(x.getId()))
+                .collect(Collectors.toList());
     }
 
 }

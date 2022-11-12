@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.exeptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.dao.FilmDbStorage;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +19,7 @@ public class FilmService {
     private final FilmStorage storage;
 
     @Autowired
-    public FilmService(InMemoryFilmStorage storage) {
+    public FilmService(FilmDbStorage storage) {
         this.storage = storage;
     }
 
