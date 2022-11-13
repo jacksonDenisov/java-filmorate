@@ -1,11 +1,17 @@
---DELETE
---FROM users;
+DELETE
+FROM users;
 
---DELETE
---FROM friends;
+DELETE
+FROM friends;
 
 DELETE
 FROM films;
+
+DELETE
+FROM LIKED_BY;
+
+DELETE
+FROM FILM_GENRE;
 
 ALTER TABLE users
     ALTER COLUMN id RESTART WITH 1;
@@ -21,10 +27,10 @@ MERGE INTO mpa KEY (id)
            (5, 'NC-17');
 
 MERGE INTO genres KEY (id)
-VALUES ( 1, 'COMEDY' ),
-       ( 2, 'DRAMA' ),
-       ( 3, 'CARTOON' ),
-       ( 4, 'THRILLER' ),
-       ( 5, 'DOCUMENTARY' ),
-       ( 6, 'ACTION' )
+VALUES ( 1, 'Комедия' ),
+       ( 2, 'Драма' ),
+       ( 3, 'Мультфильм' ),
+       ( 4, 'Триллер' ),
+       ( 5, 'Документальный' ),
+       ( 6, 'Боевик' )
 ;

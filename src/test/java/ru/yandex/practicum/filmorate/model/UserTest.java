@@ -11,7 +11,7 @@ public class UserTest {
 
     @Test
     public void createUserTest() {
-        User user = new User(1, "test@mail.ru", "Логин", "Имя",
+        User user = new User(1, "Имя", "test@mail.ru", "Логин",
                 LocalDate.of(1895, 12, 28), new HashSet<>());
         assertEquals("test@mail.ru", user.getEmail());
         assertEquals("Логин", user.getLogin());

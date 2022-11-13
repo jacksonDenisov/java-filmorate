@@ -57,7 +57,7 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public List<Film> findAll() {
         List<Film> films = new ArrayList<>();
-        SqlRowSet filmIdRows = jdbcTemplate.queryForRowSet("SELECT id FROM films");
+        SqlRowSet filmIdRows = jdbcTemplate.queryForRowSet("SELECT id FROM films ORDER BY id ASC");
         while (filmIdRows.next()) {
             films.add(findById(filmIdRows.getLong("id")));
         }
@@ -79,9 +79,9 @@ public class FilmDbStorage implements FilmStorage {
                 }, keyHolder
         );
         long filmId = Objects.requireNonNull(keyHolder.getKey()).longValue();
-        String sqlQueryGenre = "INSERT INTO film_genre VALUES (?, ?)";
-        if (film.getGenre() != null && !film.getGenre().isEmpty()) {
-            for (Genre genre : film.getGenre()) {
+        if (film.getGenres() != null) {
+            String sqlQueryGenre = "INSERT INTO film_genre VALUES (?, ?)";
+            for (Genre genre : film.getGenres()) {
                 jdbcTemplate.update(sqlQueryGenre, filmId, genre.getId());
             }
         } else {
@@ -92,15 +92,26 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film update(Film film) {
-        String sqlQuery = "UPDATE films SET name = ?, description = ?, release_date = ? , duration = ?, id_mpa = ? WHERE ID = ?";
+        String sqlQueryFilm = "UPDATE films SET name = ?, description = ?, release_date = ? , duration = ?, id_mpa = ? WHERE ID = ?";
         jdbcTemplate.update(
-                sqlQuery,
+                sqlQueryFilm,
                 film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
                 film.getDuration(),
                 film.getMpa().getId(),
                 film.getId());
+        if (film.getGenres() != null) {
+            String sqlQueryGenre = "DELETE FROM film_genre WHERE film_id = ?";
+            jdbcTemplate.update(sqlQueryGenre, film.getId());
+
+            for (Genre genre : film.getGenres()) {
+                sqlQueryGenre = "MERGE INTO film_genre KEY(film_id, GENRE_ID) VALUES (?, ?)";
+                jdbcTemplate.update(sqlQueryGenre, film.getId(), genre.getId());
+            }
+        } else {
+            log.info("Список переданных жанров для фильма пуст.");
+        }
         return findById(film.getId());
     }
 
@@ -114,11 +125,6 @@ public class FilmDbStorage implements FilmStorage {
         likedByStorage.removeLike(id, userId);
     }
 
-    @Override
-    public List<Film> findMostPopularFilms(long count) {
-        return likedByStorage.findMostPopularFilms(count);
-    }
-
 
     public Film mapRowToFilm(ResultSet rs, int rowNum) throws SQLException {
         long id = rs.getLong("id");
@@ -129,7 +135,7 @@ public class FilmDbStorage implements FilmStorage {
                 .releaseDate(rs.getDate("release_date").toLocalDate())
                 .duration(rs.getInt("duration"))
                 .mpa(mpaStorage.findById(rs.getLong("id_mpa")))
-                .genre(genresStorage.getFilmGenres(id))
+                .genres(genresStorage.getFilmGenres(id))
                 .likedBy(likedByStorage.getLikedByOfFilm(id))
                 .build();
     }

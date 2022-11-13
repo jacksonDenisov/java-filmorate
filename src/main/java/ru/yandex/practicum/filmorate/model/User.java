@@ -26,13 +26,5 @@ public class User {
     private LocalDate birthday;
     private Set<Long> friends = new HashSet<>();
 
-    public User(long id, String name, String email, String login, LocalDate birthday){
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.login = login;
-        this.birthday = birthday;
-    }
-
 
 }

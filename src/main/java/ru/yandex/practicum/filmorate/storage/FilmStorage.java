@@ -6,7 +6,6 @@ import java.util.List;
 
 public interface FilmStorage {
 
-
     Film findById(Long id);
 
     List<Film> findAll();
@@ -18,7 +17,5 @@ public interface FilmStorage {
     void likeFilm(long id, long userId);
 
     void removeLike(long id, long userId);
-
-    List<Film> findMostPopularFilms(long count);
 
 }

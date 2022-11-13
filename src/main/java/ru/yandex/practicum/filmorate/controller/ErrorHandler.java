@@ -10,7 +10,7 @@ import ru.yandex.practicum.filmorate.exeptions.UserValidationException;
 
 import java.util.Map;
 
-@RestControllerAdvice(assignableTypes = {UserController.class, FilmController.class})
+@RestControllerAdvice(assignableTypes = {UserController.class, FilmController.class, MpaController.class, GenresController.class})
 public class ErrorHandler {
 
     @ExceptionHandler

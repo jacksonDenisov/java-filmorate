@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.InMemoryStorage;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exeptions.FilmValidationException;
 import ru.yandex.practicum.filmorate.exeptions.NotFoundException;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
+@Qualifier("InMemoryFilmStorage")
 public class InMemoryFilmStorage implements FilmStorage {
 
     private final Map<Long, Film> films = new HashMap<>();
@@ -71,13 +73,5 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
     }
 
-    @Override
-    public List<Film> findMostPopularFilms(long count) {
-        return findAll()
-                .stream()
-                .sorted((o1, o2) -> o2.getLikedBy().size() - o1.getLikedBy().size())
-                .limit(count)
-                .collect(Collectors.toList());
-    }
 
 }

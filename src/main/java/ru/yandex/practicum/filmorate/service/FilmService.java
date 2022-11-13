@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exeptions.FilmValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -10,6 +11,7 @@ import ru.yandex.practicum.filmorate.storage.dao.FilmDbStorage;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -18,7 +20,7 @@ public class FilmService {
     private final FilmStorage storage;
 
     @Autowired
-    public FilmService(FilmDbStorage storage) {
+    public FilmService(@Qualifier("filmDbStorage") FilmStorage storage) {
         this.storage = storage;
     }
 
@@ -62,6 +64,10 @@ public class FilmService {
 
     public List<Film> findMostPopularFilms(long count) {
         log.info("Возвращаем список популярных фильмов.");
-        return storage.findMostPopularFilms(count);
+        return storage.findAll()
+                .stream()
+                .sorted((o1, o2) -> o2.getLikedBy().size() - o1.getLikedBy().size())
+                .limit(count)
+                .collect(Collectors.toList());
     }
 }
