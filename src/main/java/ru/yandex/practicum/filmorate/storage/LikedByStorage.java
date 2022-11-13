@@ -3,22 +3,17 @@ package ru.yandex.practicum.filmorate.storage;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.List;
+import java.util.Set;
 
-public interface FilmStorage {
+public interface LikedByStorage {
 
+    boolean isLikeExist(long id, long userId);
 
-    Film findById(Long id);
+    Set<Long> getLikedByOfFilm(long id);
 
-    List<Film> findAll();
-
-    Film create(Film film);
-
-    Film update(Film film);
+    List<Film> findMostPopularFilms(long count);
 
     void likeFilm(long id, long userId);
 
     void removeLike(long id, long userId);
-
-    List<Film> findMostPopularFilms(long count);
-
 }

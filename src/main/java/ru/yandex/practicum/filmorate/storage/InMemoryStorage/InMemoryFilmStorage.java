@@ -1,16 +1,17 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.InMemoryStorage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exeptions.FilmValidationException;
 import ru.yandex.practicum.filmorate.exeptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -38,9 +39,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film create(Film film) {
         if (films.containsKey(film.getId())) {
             throw new FilmValidationException("Такой фильм уже существует!");
-        } else if (film.getDescription().length() >= 200 ||
-                film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            throw new FilmValidationException("Фильм не прошел валидацию!");
         }
         film.setId(++id);
         films.put(id, film);
@@ -52,13 +50,34 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film update(Film film) {
         if (!films.containsKey(film.getId())) {
             throw new NotFoundException("Такого фильма нет в списке.");
-        } else if (film.getDescription().length() >= 200 ||
-                film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            throw new FilmValidationException("Фильм не прошел валидацию!");
         }
         films.put(film.getId(), film);
         log.info("Фильм {} успешно обновлен", film.getName());
         return film;
+    }
+
+    @Override
+    public void likeFilm(long id, long userId) {
+        findById(id).getLikedBy().add(userId);
+    }
+
+    @Override
+    public void removeLike(long id, long userId) {
+        if (!findById(id).getLikedBy().contains(userId)) {
+            log.info("Этот пользователь не ставил лайку данному фильму.");
+            throw new NotFoundException("Этот пользователь не ставил лайку данному фильму.");
+        } else {
+            findById(id).getLikedBy().remove(userId);
+        }
+    }
+
+    @Override
+    public List<Film> findMostPopularFilms(long count) {
+        return findAll()
+                .stream()
+                .sorted((o1, o2) -> o2.getLikedBy().size() - o1.getLikedBy().size())
+                .limit(count)
+                .collect(Collectors.toList());
     }
 
 }

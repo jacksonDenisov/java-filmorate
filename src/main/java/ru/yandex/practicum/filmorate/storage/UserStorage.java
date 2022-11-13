@@ -8,7 +8,7 @@ public interface UserStorage {
 
     List<User> findAll();
 
-    User findById(Long id);
+    User findById(long id);
 
     User create(User user);
 

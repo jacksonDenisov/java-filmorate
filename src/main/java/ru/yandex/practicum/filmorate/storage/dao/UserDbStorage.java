@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -25,12 +26,13 @@ import java.util.stream.Collectors;
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
 
+    @Autowired
     public UserDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
-    public User findById(Long id) {
+    public User findById(long id) {
         String sqlQuery = "SELECT * FROM users WHERE id = ?";
         User user;
         try {
@@ -70,15 +72,19 @@ public class UserDbStorage implements UserStorage {
                     return ps;
                 }, keyHolder
         );
-        long id = Objects.requireNonNull(keyHolder.getKey()).longValue();
-        return findById(id);
+        return findById(Objects.requireNonNull(keyHolder.getKey()).longValue());
     }
 
     @Override
     public User update(User user) {
         String sqlQuery = "UPDATE users SET name = ?, email = ?, login = ? , birthday = ? WHERE ID = ?";
-        jdbcTemplate
-                .update(sqlQuery, user.getName(), user.getEmail(), user.getLogin(), user.getBirthday(), user.getId());
+        jdbcTemplate.update(
+                sqlQuery,
+                user.getName(),
+                user.getEmail(),
+                user.getLogin(),
+                user.getBirthday(),
+                user.getId());
         return findById(user.getId());
     }
 
