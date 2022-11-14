@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -72,6 +71,5 @@ public class InMemoryFilmStorage implements FilmStorage {
             findById(id).getLikedBy().remove(userId);
         }
     }
-
 
 }

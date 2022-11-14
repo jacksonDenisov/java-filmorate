@@ -8,8 +8,6 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exeptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.MPA;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.GenresStorage;
 
 import java.sql.ResultSet;
@@ -43,7 +41,7 @@ public class GenresDbStorage implements GenresStorage {
     }
 
     @Override
-    public List<Genre> findAll(){
+    public List<Genre> findAll() {
         List<Genre> genres = new ArrayList<>();
         SqlRowSet genresIdRows = jdbcTemplate.queryForRowSet("SELECT id FROM genres");
         while (genresIdRows.next()) {
@@ -53,7 +51,7 @@ public class GenresDbStorage implements GenresStorage {
     }
 
     @Override
-    public List<Genre> getFilmGenres(long filmId){
+    public List<Genre> getFilmGenres(long filmId) {
         List<Genre> filmGenres = new ArrayList<>();
         SqlRowSet filmIdRows = jdbcTemplate.queryForRowSet("SELECT genre_id FROM film_genre WHERE film_id = ?", filmId);
         while (filmIdRows.next()) {
@@ -62,8 +60,7 @@ public class GenresDbStorage implements GenresStorage {
         return filmGenres;
     }
 
-
-    private Genre mapRowToGenre(ResultSet rs, int rowNum) throws SQLException {
+    protected Genre mapRowToGenre(ResultSet rs, int rowNum) throws SQLException {
         return Genre.builder()
                 .id(rs.getLong("id"))
                 .name(rs.getString("name"))

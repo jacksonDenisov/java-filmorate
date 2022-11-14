@@ -1,2 +1,5 @@
 # java-filmorate
-Template repository for Filmorate project.
+Кинопоиск для своих.
+
+Схема БД:
+![DbDiagram.png](DbDiagram.png)

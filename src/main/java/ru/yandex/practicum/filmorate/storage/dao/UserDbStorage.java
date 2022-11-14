@@ -125,7 +125,7 @@ public class UserDbStorage implements UserStorage {
                 .collect(Collectors.toList());
     }
 
-    private User mapRowToUser(ResultSet rs, int rowNum) throws SQLException {
+    protected User mapRowToUser(ResultSet rs, int rowNum) throws SQLException {
         return User.builder()
                 .id(rs.getLong("id"))
                 .name(rs.getString("name"))

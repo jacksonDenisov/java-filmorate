@@ -126,7 +126,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
 
-    public Film mapRowToFilm(ResultSet rs, int rowNum) throws SQLException {
+    protected Film mapRowToFilm(ResultSet rs, int rowNum) throws SQLException {
         long id = rs.getLong("id");
         return Film.builder()
                 .id(id)

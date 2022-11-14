@@ -42,7 +42,7 @@ public class MpaDbStorage implements MpaStorage {
     }
 
     @Override
-    public List<MPA> findAll(){
+    public List<MPA> findAll() {
         List<MPA> allMpa = new ArrayList<>();
         SqlRowSet mpaIdRows = jdbcTemplate.queryForRowSet("SELECT id FROM mpa");
         while (mpaIdRows.next()) {
@@ -52,7 +52,7 @@ public class MpaDbStorage implements MpaStorage {
     }
 
 
-    private MPA mapRowToMpa(ResultSet rs, int rowNum) throws SQLException {
+    protected MPA mapRowToMpa(ResultSet rs, int rowNum) throws SQLException {
         return MPA.builder()
                 .id(rs.getLong("id"))
                 .name(rs.getString("name"))
