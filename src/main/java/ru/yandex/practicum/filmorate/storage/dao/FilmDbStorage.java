@@ -45,8 +45,8 @@ public class FilmDbStorage implements FilmStorage {
     public List<Film> findAll() {
         String sql = "SELECT * FROM films JOIN mpa on films.id_mpa=mpa.id";
         List<Film> films = jdbcTemplate.query(sql, this::mapRowToFilm);
-        HashMap<Long, Set<Long>> allLikes = findAllFilmsLikes();
-        HashMap<Long, List<Genre>> allGenres = getAllFilmsGenres();
+        Map<Long, Set<Long>> allLikes = findAllFilmsLikes();
+        Map<Long, List<Genre>> allGenres = getAllFilmsGenres();
         for (Film film : films) {
             if (allLikes.containsKey(film.getId())) {
                 film.setLikedBy(allLikes.get(film.getId()));
@@ -146,8 +146,8 @@ public class FilmDbStorage implements FilmStorage {
     }
 
 
-    public HashMap<Long, Set<Long>> findAllFilmsLikes() {
-        HashMap<Long, Set<Long>> allLikes = new HashMap<>();
+    public Map<Long, Set<Long>> findAllFilmsLikes() {
+        Map<Long, Set<Long>> allLikes = new HashMap<>();
         Set<Long> likes;
         SqlRowSet likedByIdRows = jdbcTemplate.queryForRowSet("SELECT * FROM liked_by ");
         while (likedByIdRows.next()) {
@@ -191,8 +191,8 @@ public class FilmDbStorage implements FilmStorage {
     }
 
 
-    public HashMap<Long, List<Genre>> getAllFilmsGenres() {
-        HashMap<Long, List<Genre>> allGenres = new HashMap<>();
+    public Map<Long, List<Genre>> getAllFilmsGenres() {
+        Map<Long, List<Genre>> allGenres = new HashMap<>();
         List<Genre> filmGenres;
         SqlRowSet genreInfoRows = jdbcTemplate.queryForRowSet("SELECT * FROM film_genre JOIN genres on film_genre.genre_id=genres.id");
         while (genreInfoRows.next()) {

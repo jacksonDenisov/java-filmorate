@@ -40,7 +40,7 @@ public class UserDbStorage implements UserStorage {
     public List<User> findAll() {
         String sql = "SELECT * FROM users";
         List<User> users = jdbcTemplate.query(sql, this::mapRowToUser);
-        HashMap<Long, Set<Long>> friendsOfAllUsers = findFriendsOfAllUsers();
+        Map<Long, Set<Long>> friendsOfAllUsers = findFriendsOfAllUsers();
         for (User user : users) {
             if (friendsOfAllUsers.containsKey(user.getId())){
                 user.setFriends(friendsOfAllUsers.get(user.getId()));
@@ -130,8 +130,8 @@ public class UserDbStorage implements UserStorage {
         return friends;
     }
 
-    public HashMap<Long, Set<Long>> findFriendsOfAllUsers() {
-        HashMap<Long, Set<Long>> allUsersFriends = new HashMap<>();
+    public Map<Long, Set<Long>> findFriendsOfAllUsers() {
+        Map<Long, Set<Long>> allUsersFriends = new HashMap<>();
         Set<Long> friends;
         SqlRowSet friendsRows = jdbcTemplate.queryForRowSet("SELECT * FROM friends");
         while (friendsRows.next()) {
