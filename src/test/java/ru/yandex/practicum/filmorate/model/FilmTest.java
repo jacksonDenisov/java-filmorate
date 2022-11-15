@@ -5,6 +5,7 @@ import org.junit.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class FilmTest {
@@ -12,7 +13,7 @@ public class FilmTest {
     @Test
     public void createFilmTest() {
         Film film = new Film(1, "Фильм", "Описание",
-                LocalDate.of(1895, 12, 28), 50, new HashSet<>());
+                LocalDate.of(1895, 12, 28), 50,  new MPA(), new ArrayList<>(), new HashSet<>());
         assertEquals(1, film.getId());
         assertEquals("Фильм", film.getName());
         assertEquals(50, film.getDuration());

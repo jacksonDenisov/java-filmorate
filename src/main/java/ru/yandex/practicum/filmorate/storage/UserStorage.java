@@ -8,11 +8,20 @@ public interface UserStorage {
 
     List<User> findAll();
 
-    User findById(Long id);
+    User findById(long id);
 
     User create(User user);
 
     User update(User user);
 
     boolean isIdExist(long id);
+
+    void addFriend(long id, long friendId);
+
+    void removeFriend(long id, long friendId);
+
+    List<User> findFriendsOfUser(long id);
+
+    List<User> findCommonFriends(long id, long otherId);
+
 }

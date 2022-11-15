@@ -4,7 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exeptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.model.MPA;
+import ru.yandex.practicum.filmorate.storage.InMemoryStorage.InMemoryFilmStorage;
+
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -26,9 +28,9 @@ public class FilmServiceTest {
     public void setup() {
         this.service = new FilmService(new InMemoryFilmStorage());
         this.film1 = new Film(1, "Фильм", "Описание",
-                LocalDate.of(1895, 12, 28), 50, new HashSet<>());
+                LocalDate.of(1895, 12, 28), 50, new MPA(), new ArrayList<>(), new HashSet<>());
         this.film2 = new Film(2, "Фильм2", "Описание2",
-                LocalDate.of(1897, 12, 28), 70, new HashSet<>());
+                LocalDate.of(1897, 12, 28), 70, new MPA(), new ArrayList<>(), new HashSet<>());
     }
 
     @Test
