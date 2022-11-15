@@ -3,21 +3,18 @@ package ru.yandex.practicum.filmorate.storage.dao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exeptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exeptions.UserValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import java.sql.Date;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -34,25 +31,24 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User findById(long id) {
         String sqlQuery = "SELECT * FROM users WHERE id = ?";
-        User user;
-        try {
-            user = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUser, id);
-        } catch (EmptyResultDataAccessException e) {
-            log.info("Пользователь с id " + id + " не найден.");
-            throw new NotFoundException("Пользователь не найден");
-        }
+        User user = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUser, id);
+        user.setFriends(findListFriendsOfUsers(id));
         return user;
     }
 
     @Override
     public List<User> findAll() {
-        List<User> users = new ArrayList<>();
-        SqlRowSet userIdRows = jdbcTemplate.queryForRowSet("SELECT id FROM users");
-        while (userIdRows.next()) {
-            users.add(findById(userIdRows.getLong("id")));
+        String sql = "SELECT * FROM users";
+        List<User> users = jdbcTemplate.query(sql, this::mapRowToUser);
+        HashMap<Long, Set<Long>> friendsOfAllUsers = findFriendsOfAllUsers();
+        for (User user : users) {
+            if (friendsOfAllUsers.containsKey(user.getId())){
+                user.setFriends(friendsOfAllUsers.get(user.getId()));
+            }
         }
         return users;
     }
+
 
     @Override
     public User create(User user) {
@@ -125,14 +121,39 @@ public class UserDbStorage implements UserStorage {
                 .collect(Collectors.toList());
     }
 
+    public Set<Long> findListFriendsOfUsers(Long id) {
+        Set<Long> friends = new HashSet<>();
+        SqlRowSet friendsRows = jdbcTemplate.queryForRowSet("SELECT * FROM friends WHERE user_id = ?", id);
+        while (friendsRows.next()) {
+            friends.add(friendsRows.getLong("friend_id"));
+        }
+        return friends;
+    }
+
+    public HashMap<Long, Set<Long>> findFriendsOfAllUsers() {
+        HashMap<Long, Set<Long>> allUsersFriends = new HashMap<>();
+        Set<Long> friends;
+        SqlRowSet friendsRows = jdbcTemplate.queryForRowSet("SELECT * FROM friends");
+        while (friendsRows.next()) {
+            long userId = friendsRows.getLong("user_id");
+            long friendId = friendsRows.getLong("friend_id");
+            if (!allUsersFriends.containsKey(userId)) {
+                friends = new HashSet<>();
+                friends.add(friendId);
+                allUsersFriends.put(userId, friends);
+            }
+            allUsersFriends.get(userId).add(friendId);
+        }
+        return allUsersFriends;
+    }
+
     protected User mapRowToUser(ResultSet rs, int rowNum) throws SQLException {
-        return User.builder()
-                .id(rs.getLong("id"))
-                .name(rs.getString("name"))
-                .email(rs.getString("email"))
-                .login(rs.getString("login"))
-                .birthday(rs.getDate("birthday").toLocalDate())
-                .build();
+        return new User(rs.getLong("id"),
+                rs.getString("name"),
+                rs.getString("email"),
+                rs.getString("login"),
+                rs.getDate("birthday").toLocalDate(),
+                new HashSet<>());
     }
 
 }

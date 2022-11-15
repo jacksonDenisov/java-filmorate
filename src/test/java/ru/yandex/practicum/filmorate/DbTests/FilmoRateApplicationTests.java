@@ -14,7 +14,6 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.GenresStorage;
-import ru.yandex.practicum.filmorate.storage.LikedByStorage;
 import ru.yandex.practicum.filmorate.storage.MpaStorage;
 import ru.yandex.practicum.filmorate.storage.dao.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.UserDbStorage;
@@ -35,7 +34,6 @@ public class FilmoRateApplicationTests {
     private final UserDbStorage userStorage;
     private final FilmDbStorage filmDbStorage;
     private final GenresStorage genresStorage;
-    private final LikedByStorage likedByStorage;
     private final MpaStorage mpaStorage;
     private final JdbcTemplate jdbcTemplate;
 
@@ -186,7 +184,7 @@ public class FilmoRateApplicationTests {
     public void getFilmGenresTest(){
         film1.setGenres(listGenres);
         filmDbStorage.create(film1);
-        assertEquals(genresStorage.getFilmGenres(1).get(0).getName(), "Комедия");
+        assertEquals(filmDbStorage.getFilmGenres(1).get(0).getName(), "Комедия");
     }
 
     @Test
@@ -204,26 +202,26 @@ public class FilmoRateApplicationTests {
     public void likeFilmAndGetLikedByOfFilmTest() {
         userStorage.create(user1);
         filmDbStorage.create(film1);
-        likedByStorage.likeFilm(1,1);
-        assertEquals(likedByStorage.getLikedByOfFilm(1).size(), 1);
+        filmDbStorage.likeFilm(1,1);
+        assertEquals(filmDbStorage.getLikedByOfFilm(1).size(), 1);
     }
 
     @Test
     public void isLikeExistLikedByTest() {
         userStorage.create(user1);
         filmDbStorage.create(film1);
-        likedByStorage.likeFilm(1,1);
-        assertTrue(likedByStorage.isLikeExist(1, 1));
+        filmDbStorage.likeFilm(1,1);
+        assertTrue(filmDbStorage.isLikeExist(1, 1));
     }
 
     @Test
     public void removeLikeLikedByTest(){
         userStorage.create(user1);
         filmDbStorage.create(film1);
-        likedByStorage.likeFilm(1,1);
-        assertEquals(likedByStorage.getLikedByOfFilm(1).size(), 1);
-        likedByStorage.removeLike(1, 1);
-        assertEquals(likedByStorage.getLikedByOfFilm(1).size(), 0);
+        filmDbStorage.likeFilm(1,1);
+        assertEquals(filmDbStorage.getLikedByOfFilm(1).size(), 1);
+        filmDbStorage.removeLike(1, 1);
+        assertEquals(filmDbStorage.getLikedByOfFilm(1).size(), 0);
 
     }
 }

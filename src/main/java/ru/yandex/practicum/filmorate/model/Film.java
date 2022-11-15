@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,19 +14,28 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Film {
+
     private long id;
+
     @NotBlank(message = "Название фильма не прошло валидацию.")
     private String name;
+
     @NotBlank(message = "Описание фильма не прошло валидацию.")
     private String description;
+
     @NotNull(message = "Дата фильма = Null")
     private LocalDate releaseDate;
+
     @Positive(message = "Длительность фильма не прошла валидацию.")
     private int duration;
+
     @NotNull(message = "Значение MPA = Null")
     private MPA mpa;
+
     private List<Genre> genres;
+
     private Set<Long> likedBy;
+
+
 }

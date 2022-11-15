@@ -2,11 +2,9 @@ package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exeptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
@@ -30,33 +28,21 @@ public class MpaDbStorage implements MpaStorage {
     @Override
     public MPA findById(long id) {
         String sqlQuery = "SELECT * FROM mpa WHERE id = ?";
-        MPA mpa;
-        try {
-
-            mpa = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToMpa, id);
-        } catch (EmptyResultDataAccessException e) {
-            log.info("MPA с id " + id + " не найдено.");
-            throw new NotFoundException("MPA не найдено");
-        }
-        return mpa;
+        return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToMpa, id);
     }
 
     @Override
     public List<MPA> findAll() {
         List<MPA> allMpa = new ArrayList<>();
-        SqlRowSet mpaIdRows = jdbcTemplate.queryForRowSet("SELECT id FROM mpa");
-        while (mpaIdRows.next()) {
-            allMpa.add(findById(mpaIdRows.getLong("id")));
+        SqlRowSet mpaRows = jdbcTemplate.queryForRowSet("SELECT * FROM mpa");
+        while (mpaRows.next()) {
+            allMpa.add(new MPA(mpaRows.getLong("id"), mpaRows.getString("name")));
         }
         return allMpa;
     }
 
 
     protected MPA mapRowToMpa(ResultSet rs, int rowNum) throws SQLException {
-        return MPA.builder()
-                .id(rs.getLong("id"))
-                .name(rs.getString("name"))
-                .build();
+        return new MPA(rs.getLong("id"), rs.getString("name"));
     }
-
 }
